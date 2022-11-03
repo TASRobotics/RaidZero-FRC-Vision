@@ -1,0 +1,5 @@
+!/usr/bin/env python3
+
+#quick cameraserver
+
+from cscore import CameraServer
