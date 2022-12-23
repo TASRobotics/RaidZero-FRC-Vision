@@ -22,7 +22,7 @@ sd = NetworkTables.getTable("SmartDashboard")
 def send_timestamp():
     tosend = time.perf_counter()
     print("Send time:    " + str(tosend))
-    sd.putNumber("robottime", tosend)
+    sd.putNumber("RobotTime", tosend)
 
 def get_timestamp():
     now = time.perf_counter()
