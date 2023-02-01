@@ -24,7 +24,7 @@ class NetworkTablesVisionHelper:
     #Constructor of Helper
     
         
-    def __init__(self, ip_address, tablename = "SmartDashboard", aprilTagMaxNum = 10, FRAME_WIDTH=640, FRAME_HEIGHT=480):
+    def __init__(self, ip_address, tablename = "SmartDashboard", aprilTagMaxNum = 8, FRAME_WIDTH=640, FRAME_HEIGHT=480):
         NetworkTables.initialize(ip_address)
         cs = CameraServer.getInstance()
         camerapaths =  sorted(glob.glob('/dev/v4l/by-path/*1.0-video-index0'))
@@ -126,7 +126,7 @@ class ATagCapture:
     
     
     #Constructor of AprilTagCapture
-    def __init__(self, aprilTagSize, cameramtx_filename, cvSink, FRAME_WIDTH=640, FRAME_HEIGHT=480, families="tag16h5"):
+    def __init__(self, aprilTagSize, cameramtx_filename, cvSink, FRAME_WIDTH=640, FRAME_HEIGHT=480, families="tag16h5", aprilTagMaxNum = 8):
         self.recSide = aprilTagSize
         
         #First set the video sink camera and properties
@@ -144,7 +144,8 @@ class ATagCapture:
         #Setup AprilTag properties
         #Create AprilTag Detector
         
-        self.detector = pupil_apriltags.Detector(families = families, nthreads = 4, quad_decimate = 1.0, quad_sigma=1.0)
+        self.detector = pupil_apriltags.Detector(families = families, nthreads = 4, quad_decimate = 2.0, quad_sigma=1.6)
+        self.aprilTagMaxNum = aprilTagMaxNum
         self.results = []
         self.rvecs = []
         self.tvecs = []
@@ -183,11 +184,12 @@ class ATagCapture:
             mask = np.zeros_like(self.frame)
             mask = cv.fillPoly(mask, np.int32([reorient]), color=(0,128,0))
             
-            self.tagids.append(tag.tag_id)
-            self.rvecs.append(rvec[0])
-            self.tvecs.append(tvec[0])
-            self.masks.append(mask)
-            self.reprojectionerrors.append(reprojerr[:,0])
+            if (tag.hamming==0 and tag.tag_id <= self.aprilTagMaxNum): 
+                self.tagids.append(tag.tag_id)
+                self.rvecs.append(rvec[0])
+                self.tvecs.append(tvec[0])
+                self.masks.append(mask)
+                self.reprojectionerrors.append(reprojerr[:,0])
             
         if len(self.results) > 0:
             return True
@@ -205,19 +207,32 @@ class ATagCapture:
             to_euler = R.from_rotvec(rvec.reshape(3,))
             allEulerAngles.append(to_euler.as_euler('yxz',degrees = degrees))
         
+        print("Printing IDs")
+        print(self.tagids)
+        print("Printing Angles")
         print(allEulerAngles)
+        print("Printing Translations")
         print(self.tvecs)
         # Checking if camera is rotated by orientation of Apriltag
-        camera_rotation_correction = np.eye(2)
-        corrected_tvec = np.matrix(np.concatenate(self.tvecs,axis=0)).transpose()
+        camera_rotation_correction = np.eye(3)
+        
+        
         if len(allEulerAngles)>0:
+            corrected_tvec = np.matrix(np.concatenate(np.array(self.tvecs),axis=1))
+            
+            print("Corrected tvec")
+            print(corrected_tvec)
+            
             if np.abs(allEulerAngles[0][2])>135:
-                camera_rotation_correction = np.matrix([[-1,0],[0,-1]])
+                camera_rotation_correction = np.matrix([[-1,0,0],[0,-1,0],[0,0,1]])
             elif allEulerAngles[0][2]>45:
-                camera_rotation_correction = np.matrix([[0,-1],[1,0]])
+                camera_rotation_correction = np.matrix([[0,-1,0],[1,0,0],[0,0,1]])
             elif allEulerAngles[0][2]<-45:
-                camera_rotation_correction = np.matrix([[0,1],[-1,0]])
-        corrected_tvec = camera_rotation_correction*corrected_tvec()
+                camera_rotation_correction = np.matrix([[0,1,0],[-1,0,0],[0,0,1]])
+            corrected_tvec = camera_rotation_correction*corrected_tvec
+            self.tvecs = list(np.expand_dims(np.array(corrected_tvec.transpose()),axis=2))
+        print("New Corrected tvec")
+        print(self.tvecs)
         # self.tvecs[:][0:1] = (-np.concatenate(self.tvecs,axis=0)[0:1,:]).transpose().tolist()
             
         return self.tvecs, allEulerAngles, self.reprojectionerrors, self.frame_grabtime, self.tagids
