@@ -18,21 +18,21 @@ class WristAlignment:
         self.dataTable = table
         self.incomingKey = incomingKey
         self.outgoingKey = outgoingKey
-        self.encoderData = np.ones(bufferSize,2)*(-1000)
+        self.encoderData = np.ones([bufferSize,2])*(-1000)
         self.limitData = np.zeros(bufferSize)
         self.bufferFilled = False
         
     def update(self):
-        incomingData = self.dataTable.getNumberArray(self.incomingKey, -1000)
+        incomingData = self.dataTable.getNumberArray(self.incomingKey, [-1000,0])
         self.encoderData[self.bufferPosition] = [incomingData[0],incomingData[0]**2]
         self.limitData[self.bufferPosition] = incomingData[1]
         self.bufferPosition += 1
-        self.bufferFilled = True if self.bufferPosition>len(self.limitData()) else self.bufferFilled
+        self.bufferFilled = True if self.bufferPosition>len(self.limitData) else self.bufferFilled
         self.bufferPosition %=len(self.limitData)
         
         if self.bufferFilled and (np.mean(self.limitData)-0.5)**2<0.2:
             self.limitSwitchModel.fit(self.encoderData(), self.limitData)
-            self.dataTable.putNumberArray(self.outgoingKey, findEdges)
+            self.dataTable.putNumberArray(self.outgoingKey, self.findEdges())
             
             
     def findEdges(self):
@@ -46,5 +46,3 @@ class WristAlignment:
         return [closestEdge, isFalling]
             
         
-
->>> clf.predict(X[:2, :])

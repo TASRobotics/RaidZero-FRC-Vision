@@ -21,7 +21,6 @@ import time
 from networktables import NetworkTables
 # from networktables.util import ChooserControl
 
-from AprilTags.AprilTagCapture import NetworkTablesVisionHelper
 from AprilTags.AprilTagCapture import ATagCapture
 from EdgeDetect.LimitSwitchDetection import WristAlignment
 from VisionHelper import NetworkTablesVisionHelper
@@ -29,7 +28,7 @@ from VisionHelper import NetworkTablesVisionHelper
 tablename = "SmartDashboard"
 ip_address = "10.6.21.133"
 aprilTag_size = 0.1651
-cameramtx_filename = "./images/cheapcam/cameramtx.npz"
+cameramtx_filename = "./AprilTags/images/cheapcam/cameramtx.npz"
 
 
 
@@ -37,7 +36,7 @@ cameramtx_filename = "./images/cheapcam/cameramtx.npz"
 
 NetworkTables.initialize()
 sd = NetworkTables.getTable("SmartDashboard")
-wristSafety = WristAlignment()
+wristSafety = WristAlignment(sd)
 visionHelper = NetworkTablesVisionHelper(sd)
 #logging.basicConfig(level=logging.DEBUG)
 #import networktables
@@ -110,8 +109,7 @@ def start_cycles(visionHelper):
 
 if __name__ == '__main__':
     num_cameras = len(visionHelper.getSinks())
-    # if CONE_DETECTION: 
-    visionHelper.initializeCameras()
+    # if CONE_DETECTION:
     visionHelper.initializeAprilTagDetect(aprilTag_size , cameramtx_filename)
     visionHelper.initializeConeDetect(area_threshold, yellow_lower, yellow_upper)
     sd.addEntryListener(sync_networktables_time,key="robottime",immediateNotify=True)

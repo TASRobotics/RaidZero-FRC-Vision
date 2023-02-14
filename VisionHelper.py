@@ -5,7 +5,7 @@ from cscore import CameraServer
 from networktables import NetworkTables
 from ConeDetect.ConeCapture import ConeCapture
 import numpy as np
-import cv2 as cv
+# import cv2 as cv
 from AprilTags.AprilTagCapture import ATagCapture
 
 class NetworkTablesVisionHelper:
@@ -69,11 +69,11 @@ class NetworkTablesVisionHelper:
     def initializeConeDetect(self, area_threshold, yellow_lower, yellow_upper):
         self.coneDetectionCameras = 1
         for cvSink in self.cvsinks[:self.coneDetectionCameras]:
-            if len(self.apriltagcaptures>0):
+            if len(self.apriltagcaptures)>0:
                 self.apriltagcaptures.pop(0);
                 self.aprilTagCameras = len(self.apriltagcaptures)
                 
-            self.cone_capture = ConeCapture(self.cvsinks[0])
+            self.cone_capture = ConeCapture(cvSink, yellow_lower, yellow_upper, self.frame_width, self.frame_height, area_threshold)
            
         
         self.x_translation, self.y_translation = 0, 0
@@ -146,7 +146,7 @@ class NetworkTablesVisionHelper:
                     self.cone_capture.drawMarker()
                 if draw_rectangle:
                     self.cone_capture.drawRectangle()
-                camera_table = self.network_table.getSubTable(self.camera_name)
+                camera_table = self.sd.getSubTable(self.cone_capture.getCvSink().getSource().getName())
                 camera_table.putNumber("X Translation", self.cone_capture.getXTranslation())
                 camera_table.putNumber("Y Translation", self.cone_capture.getYTranslation())
                 print(self.cone_capture.getXTranslation(), self.cone_capture.getYTranslation())
@@ -156,12 +156,12 @@ class NetworkTablesVisionHelper:
             
     def outputVideo(self):
         for (atagcapture, outputStream) in zip(self.apriltagcaptures,self.outputStreams[self.coneDetectionCameras:]):
-            print(outputStream)
+            #print(outputStream)
             outputStream.putFrame(atagcapture.getFrame())
         
-        for (coneCapture, outputStream) in zip(self.cone_capture,self.outputStreams[:self.coneDetectionCameras]):
-            print(outputStream)
-            outputStream.putFrame(coneCapture.getFrame())
+        for outputStream in self.outputStreams[:self.coneDetectionCameras]:
+            #print(outputStream)
+            outputStream.putFrame(self.cone_capture.getFrame())
         
     def calculateConfidence(self, reprojectionerrors):
         return ((reprojectionerrors[1]-reprojectionerrors[0])/reprojectionerrors[1] if reprojectionerrors[1]>0 else 0)
