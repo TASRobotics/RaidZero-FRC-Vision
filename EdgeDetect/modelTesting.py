@@ -5,24 +5,31 @@ Created on Sun Feb 12 17:29:54 2023
 @author: bayntuna
 """
 
-
+numpoints = 20
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 
 myModel = LogisticRegression()
-myData = np.transpose(np.array([range(180),np.array(range(180))**2]))
-myValues = np.zeros([180])
-myValues[160:]=1
-myValues[0]=1
-myValues[1]=1
-myValues[2]=1
+xData = np.transpose(np.array([range(numpoints)])-15)
+# print(xData)
+myData = np.append(xData,xData**2,axis=1)
+# print(myData)
+myValues = np.zeros([numpoints])
+myValues[:5]=1
+# myValues[0]=1
+# myValues[1]=1
+# myValues[2]=1
 
-myValues[20]=1
-myValues[31]=1
-myValues[52]=1
+# myValues[20]=1
+# myValues[31]=1
+# myValues[52]=1
 myModel.fit(myData, myValues)
 Theta0 = myModel.intercept_
 Theta1 = myModel.coef_
-guess = myModel.decision_function(np.array([[10,10**2]]))
-crossover = (-Theta1[0][0]-np.sqrt(Theta1[0][0]**2-4*Theta0*Theta1[0][1]))/(2*Theta1[0][1])
-crossover2 = (-Theta1[0][0]+np.sqrt(Theta1[0][0]**2-4*Theta0*Theta1[0][1]))/(2*Theta1[0][1])
+coeffs = np.flip(myModel.coef_[0])
+coeffs = np.append(coeffs,myModel.intercept_)
+edges = np.roots(coeffs)
+meanPosition = np.mean(myData,0)[0]
+closestEdge = np.abs(edges-meanPosition).argmin()
+edgeHigher = np.sign(closestEdge-meanPosition)
+isFalling = myModel.decision_function(np.array([closestEdge-edgeHigher,(closestEdge-edgeHigher)**2]).reshape(1,-1))>0

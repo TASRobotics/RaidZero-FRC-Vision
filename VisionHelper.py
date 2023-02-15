@@ -17,13 +17,12 @@ class NetworkTablesVisionHelper:
     #Constructor of Helper
     
         
-    def __init__(self, table, FRAME_WIDTH=640, FRAME_HEIGHT=480):
-        # NetworkTables.initialize(ip_address)
+    def __init__(self, ip_address,tablename, FRAME_WIDTH=640, FRAME_HEIGHT=480):
+        NetworkTables.initialize(ip_address)
         cs = CameraServer.getInstance()
         camerapaths =  sorted(glob.glob('/dev/v4l/by-path/*1.0-video-index0'))
         print(camerapaths)
-        # self.sd = NetworkTables.getTable(tablename)
-        self.sd = table
+        self.sd = NetworkTables.getTable(tablename)
         
         #Instantiate the usbcams and sink we're going to be using
         self.frame_width, self.frame_height = FRAME_WIDTH, FRAME_HEIGHT
@@ -149,9 +148,9 @@ class NetworkTablesVisionHelper:
                 camera_table = self.sd.getSubTable(self.cone_capture.getCvSink().getSource().getName())
                 camera_table.putNumber("X Translation", self.cone_capture.getXTranslation())
                 camera_table.putNumber("Y Translation", self.cone_capture.getYTranslation())
-                print(self.cone_capture.getXTranslation(), self.cone_capture.getYTranslation())
-            else:
-                print("No Cone Detected.")
+                # print(self.cone_capture.getXTranslation(), self.cone_capture.getYTranslation())
+            # else:
+                # print("No Cone Detected.")
 
             
     def outputVideo(self):

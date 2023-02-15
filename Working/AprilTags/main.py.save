@@ -1,0 +1,220 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+
+import cv2
+import numpy as np
+#import cscore as cs
+#from cscore import CameraServer
+import threading
+import logging
+import apriltag
+from imutils.video import VideoStream
+from flask import Response
+from flask import Flask
+from flask import render_template
+import argparse
+import datetime
+import imutils
+import time
+
+
+
+app = Flask(__name__)
+#logging.basicConfig(level=logging.DEBUG)
+#import networktables
+#nt = networktables.NetworkTablesInstance()
+#nt.initialize(server='10.42.53.2')
+
+
+FRAME_WIDTH = 640
+FRAME_HEIGHT = 480
+
+#cs = CameraServer.getInstance()
+#cs.enableLogging()
+
+#camera = cs.startAutomaticCapture()
+
+#camera.setResolution(FRAME_WIDTH, FRAME_HEIGHT)
+
+#camera = cs.CvSource("cvsource", cs.VideoMode.PixelFormat.kMJPEG, 640, 480, 30)
+
+# Get a CvSink. This will capture images from the camera
+#cvSink = cs.getVideo()
+
+# (optional) Setup a CvSource. This will send images back to the Dashboard
+# outputStream = cs.putVideo("Rectangle", FRAME_WIDTH, FRAME_HEIGHT)
+print("[INFO] detecting AprilTags...")
+# Allocating new images is very expensive, always try to preallocate
+
+#windowName = "Live video Feed"
+#cv2.namedWindow(windowName)
+
+def draw(img, corners, imgpts):
+    imgpts = np.int32(imgpts).reshape(-1,2)
+    # draw ground floor in green
+    img = cv.drawContours(img, [imgpts[:4]],-1,(0,255,0),-3)
+    # draw pillars in blue color
+    for i,j in zip(range(4),range(4,8)):
+        img = cv.line(img, tuple(imgpts[i]), tuple(imgpts[j]),(255),3)
+    # draw top layer in red color
+    img = cv.drawContours(img, [imgpts[4:]],-1,(0,0,255),3)
+    return img
+
+
+def find_base_points(filename,boxsize):
+    baseline = cv2.imread(filename)
+    options =  apriltag.DetectorOptions(families="tag36h11")
+    detector = apriltag.Detector(options)
+    gray = cv2.cvtColor(baseline, cv2.COLOR_BGR2GRAY)
+    results = detector.detect(gray)
+    print("Created results")
+    try:
+        return results[0]
+    except:
+        print("No baseline image!")
+
+
+
+def gen_frames(cameramtx_filename,baseline_points):
+    cvSink = cv2.VideoCapture(0)
+    cvSink.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
+    cvSink.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
+
+    #Load the camera matrix
+    with np.load(cameramtx_filename) as X:
+        mtx, dist, _, _ = [X[i] for i in ('mtx','dist','rvecs','tvecs')]
+
+#    print(str(baseline_points.corners[0]))
+    #frame = np.zeros(shape=(FRAME_WIDTH, FRAME_HEIGHT, 3), dtype=np.uint8)
+    options = apriltag.DetectorOptions(families="tag36h11")
+    detector = apriltag.Detector(options)
+    toc = time.perf_counter()
+    while True:
+        success, frame = cvSink.read()
+        results = []
+        if not success:
+            break
+        else:
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            tic = time.perf_counter()
+            capturetime = f"Printed and captured image in {tic - toc:0.4f} seconds"
+            results = detector.detect(gray)
+            toc = time.perf_counter()
+            findtime = f"Found tags in {toc - tic:0.4f} seconds"
+            #print(frame.shape[:-1])
+            t_text = ""
+            r_text = ""
+
+            if len(results) > 0:
+                print("In results")
+                for r in results:
+                    # bbox = cv2.boundingRect(contour)
+            		# extract the bounding box (x, y)-coordinates for the AprilTag
+    		        # and convert each of the (x, y)-coordinate pairs to integers
+                    (ptA, ptB, ptC, ptD) = r.corners
+                    ptB = (int(ptB[0]), int(ptB[1]))
+                    ptC = (int(ptC[0]), int(ptC[1]))
+                    ptD = (int(ptD[0]), int(ptD[1]))
+                    ptA = (int(ptA[0]), int(ptA[1]))
+                    # draw the bounding box of the AprilTag detection
+                    cv2.line(frame, ptA, ptB, (0, 255, 0), 2)
+                    cv2.line(frame, ptB, ptC, (0, 255, 0), 2)
+                    cv2.line(frame, ptC, ptD, (0, 255, 0), 2)
+                    cv2.line(frame, ptD, ptA, (0, 255, 0), 2)
+                    # draw the center (x, y)-coordinates of the AprilTag
+                    (cX, cY) = (int(r.center[0]), int(r.center[1]))
+                    cv2.circle(frame, (cX, cY), 5, (0, 0, 255), -1)
+                    # draw the tag family on the image
+                    tagFamily = r.tag_family.decode("utf-8")
+                    cv2.putText(frame, "Point A", (ptA[0], ptA[1] - 15),
+                    	cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    cv2.putText(frame, "Point B", (ptB[0], ptB[1] - 15),
+                    	cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    cv2.putText(frame, "Point C", (ptC[0], ptC[1] - 15),
+                    	cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    cv2.putText(frame, "Point D", (ptD[0], ptD[1] - 15),
+                    	cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    squaresize=5.3
+                    square = np.array([[-squaresize/2,squaresize/2,0],
+                        [+squaresize/2,squaresize/2,0],
+                        [+squaresize/2,-squaresize/2,0],
+                        [-squaresize/2,-squaresize/2,0]])
+#                    baseline_corners = cv2.undistortPoints(np.squeeze(baseline_points.corners),mtx,dist)
+#                    baseline_grid = np.append(np.squeeze(baseline_corners),
+#                        np.mean(baseline_corners,axis=0),axis=0)
+#                    baseline_grid = np.append(baseline_grid,np.mean(baseline_corners[:,:1],axis=0),axis=0)
+#                    april_corners = cv2.undistortPoints(np.squeeze(r.corners),mtx,dist)
+#                    april_grid = np.append(np.squeeze(april_corners),
+#                        np.mean(april_corners,axis=0),axis=0)
+#                    april_grid = np.append(april_grid,np.mean(april_corners[:,:1],axis=0),axis=0)
+#                    E, mask = cv2.findEssentialMat(baseline_grid, april_grid,
+#                        focal=1.0, pp=(0., 0.), method=cv2.RANSAC, prob=0.999, threshold=3.0)
+#                    print(april_grid)
+                    mask, rvecs, tvecs = cv2.solvePnP(square, r.corners,
+                        mtx, dist, flags = cv2.SOLVEPNP_IPPE_SQUARE)
+                    cv2.drawFrameAxes(frame, mtx, dist, rvecs, tvecs, 3)
+                    t_text += "Translation " + str(tvecs)
+                    r_text += "Rotation " +str(rvecs)
+#                    matrix_text += "No Matrix, original points: \n" + str(april_corners)
+
+            cv2.putText(frame,r_text,(5,45),cv2.FONT_HERSHEY_SIMPLEX,
+                0.5, (0, 255, 0), 2)
+            cv2.putText(frame,t_text,(5,60),cv2.FONT_HERSHEY_SIMPLEX,
+                0.5, (0, 255, 0), 2)
+            cv2.putText(frame,capturetime,(5,15),cv2.FONT_HERSHEY_SIMPLEX,
+                0.5, (0, 255, 0), 2)
+            cv2.putText(frame,findtime,(5,30),cv2.FONT_HERSHEY_SIMPLEX,
+                0.5, (0, 255, 0), 2)
+            resolution = "Resolution: " + str(frame.shape[:-1]) 
+            cv2.putText(frame,resolution,(5,frame.shape[0]-5),cv2.FONT_HERSHEY_SIMPLEX,
+                0.5, (0, 255, 0), 2)
+
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+
+
+
+        #output = frame.tobytes()
+        #yield (b'--frame\r\n'
+        #           b'Content-Type: image/jpeg\r\n\r\n' + output + b'\r\n')  # concat frame one by one and show result
+        #cv2.imshow("Tracking... ", frame)
+        #cv2.imshow("Gray", gray)
+        #cv2.imshow(windowName, frame)
+        key = cv2.waitKey(1) & 0xFF
+        # if the `q` key was pressed, break from the loop
+        if key == ord("q"):
+            break
+
+
+@app.route('/video_feed')
+def video_feed():
+    baseline_points = find_base_points("./images/apriltag1m.jpg",10)
+    #Video streaming route. Put this in the src attribute of an img tag
+    return Response(gen_frames("./images/cameramtx.npz",baseline_points), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/')
+def index():
+    """Video streaming home page."""
+    return render_template('index.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True,host="0.0.0.0")
+
+#th = threading.Thread(target=video_thread, daemon=True)
+#th.start()
+
+#mjpegServer = cs.MjpegServer("httpserver", 8081)
+#mjpegServer.setSource(camera)
+
+#print("mjpg server listening at http://0.0.0.0:8081")
+input("Press enter to exit...")
+
+cv2.destroyAllWindows()

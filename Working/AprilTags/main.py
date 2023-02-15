@@ -6,38 +6,35 @@ This is a temporary script file.
 """
 
 import cv2 as cv
-# import numpy as np
-# #import cscore as cs
-# #from cscore import CameraServer
-# import threading
-# import logging
-# import pupil_apriltags
-# from imutils.video import VideoStream
-# import argparse
-# import datetime
+import numpy as np
+#import cscore as cs
+#from cscore import CameraServer
+import threading
+import logging
+import pupil_apriltags
+from imutils.video import VideoStream
+import argparse
+import datetime
 import time
 
 
 from networktables import NetworkTables
-# from networktables.util import ChooserControl
+from networktables.util import ChooserControl
 
-from AprilTags.AprilTagCapture import ATagCapture
-from EdgeDetect.LimitSwitchDetection import WristAlignment
-from VisionHelper import NetworkTablesVisionHelper
+from AprilTagCapture import NetworkTablesVisionHelper
+from AprilTagCapture import ATagCapture
+
 
 tablename = "SmartDashboard"
 ip_address = "10.42.53.2"
 aprilTag_size = 0.1651
-cameramtx_filename = "./AprilTags/images/cheapcam/cameramtx.npz"
+cameramtx_filename = "./images/cheapcam/cameramtx.npz"
 
 
+visionHelper = NetworkTablesVisionHelper(ip_address)
 
 NetworkTables.initialize(ip_address)
-sd = NetworkTables.getTable(tablename)
-
-
-wristSafety = WristAlignment(ip_address, tablename)
-visionHelper = NetworkTablesVisionHelper(ip_address, tablename)
+sd = NetworkTables.getTable("SmartDashboard")
 #logging.basicConfig(level=logging.DEBUG)
 #import networktables
 #nt = networktables.NetworkTablesInstance()
@@ -46,12 +43,6 @@ visionHelper = NetworkTablesVisionHelper(ip_address, tablename)
 
 FRAME_WIDTH = 640
 FRAME_HEIGHT = 480
-
-area_threshold = 2000
-
-yellow_lower = [0, 56, 152]
-yellow_upper = [76, 238, 255]
-CONE_DETECTION = True
 
 #cs = CameraServer.getInstance()
 #cs.enableLogging()
@@ -86,11 +77,10 @@ def sync_networktables_time(table, key, value, isNew):
 
 
 
-def start_cycles(visionHelper):
+def gen_frames(visionHelper):
     while(True):
         visionHelper.processVideos(drawAxes=True,drawMask=True)
         visionHelper.outputVideo()
-        wristSafety.run()
 
 
         #output = frame.tobytes()
@@ -109,13 +99,13 @@ def start_cycles(visionHelper):
 
 if __name__ == '__main__':
     num_cameras = len(visionHelper.getSinks())
-    # if CONE_DETECTION:
-    visionHelper.initializeAprilTagDetect(aprilTag_size , cameramtx_filename)
-    visionHelper.initializeConeDetect(area_threshold, yellow_lower, yellow_upper)
+    for (camera_num, cv_sink) in zip(range(num_cameras),visionHelper.getSinks()):
+        print("Adding apriltag capture " + str(camera_num))
+        visionHelper.addAprilTagCapturing(ATagCapture(aprilTagSize=aprilTag_size, 
+                                                      cameramtx_filename=cameramtx_filename, cvSink=cv_sink))
     sd.addEntryListener(sync_networktables_time,key="robottime",immediateNotify=True)
     visionHelper.syncTimes()
-    start_cycles(visionHelper=visionHelper)
-    
+    gen_frames(visionHelper=visionHelper)
     #app.run(debug=True,host="0.0.0.0")
 
 #th = threading.Thread(target=video_thread, daemon=True)

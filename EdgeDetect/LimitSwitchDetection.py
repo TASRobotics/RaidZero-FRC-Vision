@@ -11,28 +11,35 @@ from networktables import NetworkTables
 
 class WristAlignment:
     
-    def __init__(self, table, bufferSize = 150, 
+    def __init__(self, ip_address, table, bufferSize = 20, 
                  incomingKey = "LimitSwitchData", outgoingKey = "EdgeData"):
+        NetworkTables.initialize(ip_address)
         self.bufferPosition = 0
         self.limitSwitchModel = LogisticRegression()
-        self.dataTable = table
+        self.dataTable = NetworkTables.getTable(table)
         self.incomingKey = incomingKey
         self.outgoingKey = outgoingKey
         self.encoderData = np.ones([bufferSize,2])*(-1000)
         self.limitData = np.zeros(bufferSize)
         self.bufferFilled = False
         
-    def update(self):
+    def run(self):
         incomingData = self.dataTable.getNumberArray(self.incomingKey, [-1000,0])
-        self.encoderData[self.bufferPosition] = [incomingData[0],incomingData[0]**2]
-        self.limitData[self.bufferPosition] = incomingData[1]
+        if incomingData[0]==-1000: return
+        self.encoderData[self.bufferPosition] = [incomingData[1],incomingData[1]**2]
+        self.limitData[self.bufferPosition] = incomingData[0]
         self.bufferPosition += 1
-        self.bufferFilled = True if self.bufferPosition>len(self.limitData) else self.bufferFilled
+        print(self.bufferPosition)
+        if self.bufferPosition==len(self.limitData):  self.bufferFilled = True
         self.bufferPosition %=len(self.limitData)
-        
+        print(self.bufferFilled)
+        print(np.mean(self.limitData)-0.5)
         if self.bufferFilled and (np.mean(self.limitData)-0.5)**2<0.2:
-            self.limitSwitchModel.fit(self.encoderData(), self.limitData)
+            self.limitSwitchModel.fit(self.encoderData, self.limitData)
             self.dataTable.putNumberArray(self.outgoingKey, self.findEdges())
+            self.bufferFilled = False
+            self.bufferPosition = 0
+            print("Calculating edge")
             
             
     def findEdges(self):
@@ -40,9 +47,9 @@ class WristAlignment:
         coeffs = np.append(coeffs,self.limitSwitchModel.intercept_)
         edges = np.roots(coeffs)
         meanPosition = np.mean(self.encoderData,0)[0]
-        closestEdge = np.abs(edges-meanPosition).argmin()
-        edgeHigher = np.sign(closestEdge-meanPosition)
-        isFalling = self.limitSwitchModel.decision_function(np.array([closestEdge-edgeHigher,(closestEdge-edgeHigher)**2]).reshape(1,-1))
+        closestEdge = edges[np.abs(edges-meanPosition).argmin()]
+        fromEdge = np.abs((closestEdge-meanPosition)/10.0)
+        isFalling = self.limitSwitchModel.decision_function(np.array([closestEdge-fromEdge,(closestEdge-fromEdge)**2]).reshape(1,-1))
         return [closestEdge, isFalling]
             
         
