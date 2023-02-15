@@ -9,6 +9,8 @@ class ConeCapture:
         self.frame = np.zeros((frame_height, frame_width, 3), dtype=np.uint8)
         self.hsv_frame = np.zeros((frame_height, frame_width, 3), dtype=np.uint8)
         self.mask = np.zeros((frame_height, frame_width, 3), dtype=np.uint8)
+        self.yellow_threshold = np.zeros((frame_height, frame_width, 3), dtype=np.uint8)
+
         self.frame_grab_time = time.perf_counter()
 
         self.x_translation, self.y_translation = 0, 0
@@ -19,24 +21,27 @@ class ConeCapture:
         self.frame_width = frame_width
         self.frame_height = frame_height
 
+        self.area_threshold = area_threshold
+
         self.yellow_lower = np.array(yellow_lower, dtype='uint8')
         self.yellow_upper = np.array(yellow_upper, dtype='uint8')
 
-        self.area_threshold = area_threshold
+        self.yellow_contours = []
 
     def processFrame(self):
         self.hsv_frame = cv.cvtColor(self.frame, cv.COLOR_BGR2HSV)
 
-        yellow_threshold = cv.inRange(self.hsv_frame, self.yellow_lower, self.yellow_upper)
-        self.mask = yellow_threshold
-        (yellow_contours, _) = cv.findContours(yellow_threshold, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        self.yellow_threshold = cv.inRange(self.hsv_frame, self.yellow_lower, self.yellow_upper)
+        (contours, _) = cv.findContours(self.yellow_threshold, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
+        self.yellow_contours = []
         merge_contour = []
 
-        for contour in yellow_contours:
+        for contour in contours:
             contour_area = cv.contourArea(contour)
             if contour_area > self.area_threshold:
                 merge_contour.extend(contour)
+                self.yellow_contours.append(contour)
 
         merge_contour_x = np.array(list(map(lambda point: point.tolist()[0][0], merge_contour)))
         merge_contour_y = np.array(list(map(lambda point: point.tolist()[0][1], merge_contour)))
@@ -62,7 +67,7 @@ class ConeCapture:
         return success
 
     def drawMask(self):
-        self.frame = cv.bitwise_and(self.frame, self.frame, mask=self.mask)
+        self.frame = cv.drawContours(np.zeros(self.frame.shape, np.uint8), tuple(self.yellow_contours), -1, cv.mean(self.frame, mask=self.yellow_threshold), -1)
 
     def drawMarker(self):
         cv.drawMarker(self.frame, (self.point_x, self.point_y), (255, 255, 255), cv.MARKER_CROSS, 50, 3)

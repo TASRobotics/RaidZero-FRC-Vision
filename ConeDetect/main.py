@@ -16,7 +16,7 @@ network_table = NetworkTables.getTable(table_name)
 
 frame_width = 640
 frame_height = 480
-area_threshold = 2000
+area_threshold = 20000
 
 yellow_lower = [0, 56, 152]
 yellow_upper = [76, 238, 255]
