@@ -14,7 +14,6 @@ class ConeCapture:
         self.frame_grab_time = time.perf_counter()
 
         self.x_translation, self.y_translation = 0, 0
-
         self.min_x, self.min_y = 0, 0
         self.max_x, self.max_y = 0, 0
 
@@ -52,8 +51,8 @@ class ConeCapture:
             self.min_x, self.min_y = np.min(merge_contour_x), np.min(merge_contour_y)
             self.max_x, self.max_y = np.max(merge_contour_x), np.max(merge_contour_y)
 
-            self.point_x = (self.min_x + self.max_x) / 2
-            self.point_y = (self.min_y + self.max_y) / 2
+            self.point_x = int((self.min_x + self.max_x) / 2)
+            self.point_y = int((self.min_y + self.max_y) / 2)
 
             self.x_translation = int(self.point_x - self.frame_width / 2)
             self.y_translation = -int(self.point_y - self.frame_height / 2)
