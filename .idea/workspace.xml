@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c829c237-089d-40f5-adf4-b275c79dbab0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/ConeDetect/ConeCapture.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConeDetect/ConeCapture.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConeDetect/VisionHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConeDetect/VisionHelper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConeDetect/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConeDetect/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/AprilTagCapture.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/AprilTagVisionHelper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/ConeCapture.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/ConeVisionHelper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/WIN_20220922_15_59_01_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/WIN_20220922_15_59_05_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/WIN_20220922_15_59_07_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/WIN_20220922_15_59_09_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/WIN_20220922_15_59_12_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/WIN_20220922_15_59_15_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/apriltag1m.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/calibration.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/calibresult.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cameramtx.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cameramtx.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_12_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_18_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_22_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_25_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_30_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_32_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_35_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_37_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_40_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_44_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_46_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_48_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_53_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_56_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_33_58_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_00_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_03_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_06_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_07_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_09_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_10_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_12_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_15_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_17_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_20_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_21_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/WIN_20221031_09_34_24_Pro.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/calibresult.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/images/cheapcam/cameramtx.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RaidZero-Vision-2023/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/VisionHelper.py" beforeDir="false" afterPath="$PROJECT_DIR$/VisionHelper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JupyterTrust" id="c0ea052f-4fe5-4b91-9c82-db49ad23e00b" />
+  <component name="PropertiesComponent">
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
