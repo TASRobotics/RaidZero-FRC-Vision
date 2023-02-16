@@ -47,7 +47,7 @@ visionHelper = NetworkTablesVisionHelper(ip_address, tablename)
 FRAME_WIDTH = 640
 FRAME_HEIGHT = 480
 
-area_threshold = 2000
+area_threshold = 5000
 
 yellow_lower = [0, 56, 152]
 yellow_upper = [76, 238, 255]
