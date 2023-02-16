@@ -51,7 +51,7 @@ class NetworkTablesVisionHelper:
         #Startup the networktable
         self.sd.putStringArray("CameraNames", cameranames)
 
-    def initializeAprilTagDetect(self, aTagSize,cameramtx_filename,aprilTagMaxNum = 8):
+    def initializeAprilTagDetect(self, aTagSize,cameramtx_filename,aprilTagMaxNum = 9):
                 
         self.xTranslations = np.zeros(aprilTagMaxNum)
         self.yTranslations = np.zeros(aprilTagMaxNum)
