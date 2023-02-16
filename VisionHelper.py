@@ -101,13 +101,11 @@ class NetworkTablesVisionHelper:
         
     # def addAprilTagCapturing(self, atagcapturing):
     #     self.apriltagcaptures.append(AprilTagCapture())
-        
 
-    
-    def processVideos(self, drawAxes = False, drawMask = False):
+    def processVideos(self, drawAxes=False, drawMask=False, drawMarker=False, drawRectangle=False):
         
         self.processAprilTagVideos(drawAxes, drawMask)
-        self.processConeVideo(draw_mask=drawMask)
+        self.processConeVideo(draw_mask=drawMask, draw_marker=drawMarker, draw_rectangle=drawRectangle)
         
     def processAprilTagVideos(self, drawAxes, drawMask):
         for atagcapture in self.apriltagcaptures:

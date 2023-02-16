@@ -88,7 +88,7 @@ def sync_networktables_time(table, key, value, isNew):
 
 def start_cycles(visionHelper):
     while(True):
-        visionHelper.processVideos(drawAxes=True,drawMask=True)
+        visionHelper.processVideos(drawAxes=True, drawMask=True, drawMarker=True, drawRectangle=True)
         visionHelper.outputVideo()
         wristSafety.run()
 
@@ -103,9 +103,6 @@ def start_cycles(visionHelper):
         # if the `q` key was pressed, break from the loop
         if key == ord("q"):
             break
-
-
-
 
 if __name__ == '__main__':
     num_cameras = len(visionHelper.getSinks())
