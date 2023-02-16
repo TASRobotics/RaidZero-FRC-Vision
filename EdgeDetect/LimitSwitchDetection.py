@@ -29,23 +29,27 @@ class WristAlignment:
         self.encoderData[self.bufferPosition] = [incomingData[1],incomingData[1]**2]
         self.limitData[self.bufferPosition] = incomingData[0]
         self.bufferPosition += 1
-        print(self.bufferPosition)
+        # print(self.bufferPosition)
         if self.bufferPosition==len(self.limitData):  self.bufferFilled = True
         self.bufferPosition %=len(self.limitData)
-        print(self.bufferFilled)
-        print(np.mean(self.limitData)-0.5)
+        # print(self.bufferFilled)
+        # print(np.mean(self.limitData)-0.5)
         if self.bufferFilled and (np.mean(self.limitData)-0.5)**2<0.2:
+
             self.limitSwitchModel.fit(self.encoderData, self.limitData)
-            self.dataTable.putNumberArray(self.outgoingKey, self.findEdges())
-            self.bufferFilled = False
-            self.bufferPosition = 0
-            print("Calculating edge")
+            
+            coeffs = np.flip(self.limitSwitchModel.coef_[0])
+            coeffs = np.append(coeffs,self.limitSwitchModel.intercept_)
+            edges = np.roots(coeffs)
+            
+            if np.isreal(edges).all():
+                self.dataTable.putNumberArray(self.outgoingKey, self.findEdges())
+                self.bufferFilled = False
+                self.bufferPosition = 0
+                print("Calculating edge")
             
             
-    def findEdges(self):
-        coeffs = np.flip(self.limitSwitchModel.coef_[0])
-        coeffs = np.append(coeffs,self.limitSwitchModel.intercept_)
-        edges = np.roots(coeffs)
+    def findEdges(self, edges):
         meanPosition = np.mean(self.encoderData,0)[0]
         closestEdge = edges[np.abs(edges-meanPosition).argmin()]
         fromEdge = np.abs((closestEdge-meanPosition)/10.0)
