@@ -60,8 +60,10 @@ class NetworkTablesVisionHelper:
         self.tagIDs = np.zeros(aprilTagMaxNum)
         self.confidences = np.zeros(aprilTagMaxNum)
         
-        for cvSink in self.cvsinks[self.coneDetectionCameras:]:
-            self.apriltagcaptures.append(ATagCapture(aTagSize,cameramtx_filename,cvSink))
+        matrices = sorted(glob.glob(cameramtx_path+'*mtx.npz'))
+        for cvSink,mtx in zip(self.cvsinks[self.coneDetectionCameras:],matrices):
+            
+            self.apriltagcaptures.append(ATagCapture(aTagSize,mtx,cvSink))
             
         self.aprilTagCameras = len(self.apriltagcaptures)
 
@@ -115,7 +117,14 @@ class NetworkTablesVisionHelper:
                 cameraname = atagcapture.getSink().getSource().getName()
                 cameratable = self.sd.getSubTable(cameraname)
                 translations, rotations, reprojerrors, timestamp, seenTagIDs = atagcapture.getTranslationsAngles(degrees = True)
+                
+                # Clear arrays
                 self.tagIDs = 0*self.tagIDs
+                self.xTranslations = 0*self.xTranslations
+                self.yTranslations = 0*self.yTranslations
+                self.yTranslations = 0*self.yTranslations
+                self.yawRotations = 0*self.yawRotations
+                
                 for (tagID,translation,rotation,reprojerror) in zip(seenTagIDs,translations,rotations,reprojerrors):
                     self.xTranslations[tagID] = translation[0]
                     self.yTranslations[tagID] = translation[1]
