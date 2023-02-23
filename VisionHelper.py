@@ -51,7 +51,7 @@ class NetworkTablesVisionHelper:
         #Startup the networktable
         self.sd.putStringArray("CameraNames", cameranames)
 
-    def initializeAprilTagDetect(self, aTagSize,cameramtx_filename,aprilTagMaxNum = 9):
+    def initializeAprilTagDetect(self, aTagSize,cameramtx_path,aprilTagMaxNum = 9):
                 
         self.xTranslations = np.zeros(aprilTagMaxNum)
         self.yTranslations = np.zeros(aprilTagMaxNum)
@@ -61,8 +61,9 @@ class NetworkTablesVisionHelper:
         self.confidences = np.zeros(aprilTagMaxNum)
         
         matrices = sorted(glob.glob(cameramtx_path+'*mtx.npz'))
+        print(matrices)
         for cvSink,mtx in zip(self.cvsinks[self.coneDetectionCameras:],matrices):
-            
+            print("Adding Apriltag captures "+ str(mtx))
             self.apriltagcaptures.append(ATagCapture(aTagSize,mtx,cvSink))
             
         self.aprilTagCameras = len(self.apriltagcaptures)

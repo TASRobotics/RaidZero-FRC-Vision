@@ -29,6 +29,7 @@ from DataFitting.AbsoluteEncoderZeros import CalculateZeros
 tablename = "SmartDashboard"
 ip_address = "10.42.53.2"
 aprilTag_size = 0.1524
+# aprilTag_size = 0.101
 cameramtx_path = "./AprilTags/Calibration/"
 
 

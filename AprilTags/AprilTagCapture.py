@@ -30,6 +30,7 @@ class ATagCapture:
         
         #Load the camera matrix
         with np.load(cameramtx_filename) as X:
+            print("Loading matrix: "+str(cameramtx_filename))
             self.mtx, self.dist, _, _ = [X[i] for i in ('mtx','dist','rvecs','tvecs')]
         
         #allocate variable for images

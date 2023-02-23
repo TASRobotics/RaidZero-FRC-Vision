@@ -33,7 +33,6 @@ class CalculateZeros:
     def run(self):
         if time.perf_counter() - self.cycleTime>0.1:
             self.cycleTime = time.perf_counter()
-            self.bufferPosition += 1
             defaultData = [0]*2*len(self.absEncoderModel)
             intercepts = [0]*len(self.absEncoderModel)
             
@@ -43,7 +42,7 @@ class CalculateZeros:
                 self.absEncoderData[encoderNum][self.bufferPosition] = incomingData[encoderNum*2]
                 self.relEncoderData[encoderNum][self.bufferPosition] = incomingData[encoderNum*2+1]
                 self.absEncoderModel[encoderNum]
-                if self.bufferPosition == self.bufferSize:
+                if self.bufferPosition == self.bufferSize - 1:
         
                     self.absEncoderModel[encoderNum].fit(
                         self.absEncoderData[encoderNum], 
@@ -54,8 +53,9 @@ class CalculateZeros:
             if np.isreal(intercepts).all():
                 self.dataTable.putNumberArray(self.outgoingKey, intercepts)
 
-                
-            self.bufferPosition %=len(self.bufferSize)
+            
+            self.bufferPosition += 1    
+            self.bufferPosition %=self.bufferSize
             # print(self.bufferFilled)
             # print(np.mean(self.limitData)-0.5)
             
