@@ -123,7 +123,7 @@ class NetworkTablesVisionHelper:
                 self.tagIDs = 0*self.tagIDs
                 self.xTranslations = 0*self.xTranslations
                 self.yTranslations = 0*self.yTranslations
-                self.zTranslations = 0*self.yTranslations
+                self.zTranslations = 0*self.zTranslations
                 self.yawRotations = 0*self.yawRotations
                 self.confidences = 0*self.confidencescamer
                 
@@ -154,9 +154,9 @@ class NetworkTablesVisionHelper:
                     self.cone_capture.drawMarker()
                 if draw_rectangle:
                     self.cone_capture.drawRectangle()
-                camera_table = self.sd.getSubTable(self.cone_capture.getCvSink().getSource().getName())
-                camera_table.putNumber("X Translation", self.cone_capture.getXTranslation())
-                camera_table.putNumber("Y Translation", self.cone_capture.getYTranslation())
+            camera_table = self.sd.getSubTable(self.cone_capture.getCvSink().getSource().getName())
+            camera_table.putNumber("X Translation", self.cone_capture.getXTranslation())
+            camera_table.putNumber("Y Translation", self.cone_capture.getYTranslation())
                 # print(self.cone_capture.getXTranslation(), self.cone_capture.getYTranslation())
             # else:
                 # print("No Cone Detected.")
