@@ -123,8 +123,9 @@ class NetworkTablesVisionHelper:
                 self.tagIDs = 0*self.tagIDs
                 self.xTranslations = 0*self.xTranslations
                 self.yTranslations = 0*self.yTranslations
-                self.yTranslations = 0*self.yTranslations
+                self.zTranslations = 0*self.yTranslations
                 self.yawRotations = 0*self.yawRotations
+                self.confidences = 0*self.confidencescamer
                 
                 for (tagID,translation,rotation,reprojerror) in zip(seenTagIDs,translations,rotations,reprojerrors):
                     self.xTranslations[tagID] = translation[0]
