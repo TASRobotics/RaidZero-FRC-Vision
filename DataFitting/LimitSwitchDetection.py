@@ -26,6 +26,8 @@ class WristAlignment:
         self.cycleTime = time.perf_counter()
         
     def run(self):
+        # print(time.perf_counter())
+        # print(self.cycleTime)
         if time.perf_counter() - self.cycleTime>0.1:
             self.cycleTime = time.perf_counter()
             incomingData = self.dataTable.getNumberArray(self.incomingKey, [-1000,0])

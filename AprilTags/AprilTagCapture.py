@@ -121,10 +121,13 @@ class ATagCapture:
             
             if np.abs(allEulerAngles[0][2])>135:
                 camera_rotation_correction = np.matrix([[-1,0,0],[0,-1,0],[0,0,1]])
-            elif allEulerAngles[0][2]>45:
-                camera_rotation_correction = np.matrix([[0,-1,0],[1,0,0],[0,0,1]])
-            elif allEulerAngles[0][2]<-45:
+                
+            elif allEulerAngles[0][2]>45 && allEulerAngles[0][2]<=135:
                 camera_rotation_correction = np.matrix([[0,1,0],[-1,0,0],[0,0,1]])
+                
+            elif allEulerAngles[0][2]<-45 && allEulerAngles[0][2]>=-135:
+                camera_rotation_correction = np.matrix([[0,-1,0],[1,0,0],[0,0,1]])
+                
             corrected_tvec = camera_rotation_correction*corrected_tvec
             self.tvecs = list(np.expand_dims(np.array(corrected_tvec.transpose()),axis=2))
         # print("New Corrected tvec")
