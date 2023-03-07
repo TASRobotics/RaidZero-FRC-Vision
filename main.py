@@ -111,8 +111,9 @@ def start_cycles(visionHelper):
 if __name__ == '__main__':
     num_cameras = len(visionHelper.getSinks())
     # if CONE_DETECTION:
-    visionHelper.initializeAprilTagDetect(aprilTag_size , cameramtx_path)
-    visionHelper.initializeConeDetect(area_threshold, yellow_lower, yellow_upper)
+    visionHelper.initializeDetectors(1, aprilTag_size, cameramtx_path, area_threshold, yellow_lower, yellow_upper)
+    # visionHelper.initializeAprilTagDetect(aprilTag_size , cameramtx_path)
+    # visionHelper.initializeConeDetect(area_threshold, yellow_lower, yellow_upper)
     sd.addEntryListener(sync_networktables_time,key="robottime",immediateNotify=True)
     visionHelper.syncTimes()
     start_cycles(visionHelper=visionHelper)
