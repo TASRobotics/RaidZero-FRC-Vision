@@ -9,7 +9,7 @@ import numpy as np
 import cv2 as cv
 import glob
 
-FOLDER = "./Camera 1 images/"
+FOLDER = "./Camera 2 images/"
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 34, 0.001)
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
