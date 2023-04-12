@@ -12,18 +12,19 @@ import time
 
 class CalculateZeros:
     
-    def __init__ (self, ip_address, table, numFits = 2, bufferSize = 50, 
-                 incomingKey = "EncoderData", outgoingKey = "Offset"):
+    def __init__ (self, ip_address, table, encoderNames = ["Proximal", "Distal"], bufferSize = 50, 
+                 incomingKey = "Angle", outgoingKey = "Offset"):
         NetworkTables.initialize(ip_address)
         self.bufferPosition = 0
         self.bufferSize = bufferSize
-        self.dataTable = NetworkTables.getTable(table).getSubTable("Arm")
+        self.dataTable = NetworkTables.getTable(table)
         self.incomingKey = incomingKey
         self.outgoingKey = outgoingKey
         self.absEncoderModel = []
         self.relEncoderData = []
         self.absEncoderData = []
-        for modelNum in range (numFits):
+        self.encoderNames = encoderNames
+        for modelName in range (encoderNames):
             self.absEncoderModel.append(LinearRegression())
             self.relEncoderData.append(np.zeros([bufferSize,1]))
             self.absEncoderData.append(np.zeros([bufferSize,1]))
@@ -33,23 +34,20 @@ class CalculateZeros:
     def run(self):
         if time.perf_counter() - self.cycleTime>0.1:
             self.cycleTime = time.perf_counter()
-            defaultData = [0]*2*len(self.absEncoderModel)
+            # defaultData = [0]*2*len(self.absEncoderModel)
+            defaultData = 0
             intercepts = [0]*len(self.absEncoderModel)
             
-            for encoderNum in range(len(self.absEncoderModel)):
+            for absencoder,relencoder,model,name in zip(self.absEncoderData,self.relEncoderData,self.absEncoderModel,self.encoderNames):
                 
-                incomingData = self.dataTable.getNumberArray(self.incomingKey+str(encoderNum), defaultData)
-                self.absEncoderData[encoderNum][self.bufferPosition] = incomingData[encoderNum*2]
-                self.relEncoderData[encoderNum][self.bufferPosition] = incomingData[encoderNum*2+1]
-                self.absEncoderModel[encoderNum]
+                relencoder[self.bufferPosition] = self.dataTable.getNumber(name+ " " + self.incomingKey, defaultData)
+                absencoder[self.bufferPosition] = self.dataTable.getNumber(name+" Absolute " +self.incomingKey, defaultData)
                 if self.bufferPosition == self.bufferSize - 1:
         
-                    self.absEncoderModel[encoderNum].fit(
-                        self.absEncoderData[encoderNum], 
-                        self.relEncoderData[encoderNum])
+                    model.fit(absencoder,relencoder)
                     
-                    intercepts[encoderNum] = self.absEncoderModel[encoderNum].intercept_
-                    
+            
+            intercepts = [model.intercept_ for model in self.absEncoderModel]
             if np.isreal(intercepts).all():
                 self.dataTable.putNumberArray(self.outgoingKey, intercepts)
 
