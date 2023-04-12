@@ -116,10 +116,6 @@ class NetworkTablesVisionHelper:
     def calculateConfidence(self, reprojectionerrors):
         return ((reprojectionerrors[1]-reprojectionerrors[0])/reprojectionerrors[1] if reprojectionerrors[1]>0 else 0)
 
-            
-        
-        
-
 
 
 class ATagCapture:

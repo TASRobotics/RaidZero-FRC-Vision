@@ -50,10 +50,11 @@ armSafety = CalculateZeros(ip_address, tablename)
 FRAME_WIDTH = 640
 FRAME_HEIGHT = 480
 
-area_threshold = 50000
+area_threshold = 12000
 
-yellow_lower = [0, 56, 152]
-yellow_upper = [76, 238, 255]
+yellow_lower = [104, 0, 0]
+yellow_upper = [170, 255, 255]
+
 CONE_DETECTION = True
 
 #cs = CameraServer.getInstance()
