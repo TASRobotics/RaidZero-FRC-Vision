@@ -3,7 +3,7 @@ import cv2 as cv
 import numpy as np
 
 class ConeCapture:
-    def __init__(self, cv_sink, yellow_lower, yellow_upper, frame_width, frame_height, area_threshold):
+    def __init__(self, cv_sink, yellow_lower, yellow_upper, frame_width, frame_height, area_threshold, angle_convert):
         self.cv_sink = cv_sink
 
         self.frame = np.zeros((frame_height, frame_width, 3), dtype=np.uint8)
@@ -16,6 +16,9 @@ class ConeCapture:
         self.x_translation, self.y_translation = 0, 0
         self.min_x, self.min_y = 0, 0
         self.max_x, self.max_y = 0, 0
+
+        self.angle = 0
+        self.angle_convert = angle_convert
 
         self.point_x, self.point_y = 0, 0
 
@@ -57,9 +60,12 @@ class ConeCapture:
             self.x_translation = int(self.point_x - self.frame_width / 2)
             self.y_translation = -int(self.point_y - self.frame_height / 2)
 
+            self.angle = self.x_translation / self.angle_convert
+
             return True
         else:
             self.x_translation, self.y_translation = 0, 0
+            self.angle = 0
 
         return False
 
@@ -88,3 +94,6 @@ class ConeCapture:
 
     def getYTranslation(self):
         return self.y_translation
+
+    def getAngle(self):
+        return self.angle

@@ -55,10 +55,10 @@ class NetworkTablesVisionHelper:
         self.sd.putStringArray("CameraNames", cameranames)
 
     def initializeDetectors(self, numColourCameras, aTagSize, cameramtx_path,
-                            area_threshold, yellow_lower, yellow_upper, aprilTagMaxNum = 9):
+                            area_threshold, yellow_lower, yellow_upper, angle_convert, aprilTagMaxNum = 9):
         self.coneDetectionCameras = numColourCameras
         self.initializeAprilTagDetect(aTagSize, cameramtx_path, aprilTagMaxNum)
-        self.initializeConeDetect(area_threshold, yellow_lower, yellow_upper)
+        self.initializeConeDetect(area_threshold, yellow_lower, yellow_upper, angle_convert)
 
 
     def initializeAprilTagDetect(self, aTagSize,cameramtx_path,aprilTagMaxNum = 9):
@@ -80,11 +80,11 @@ class NetworkTablesVisionHelper:
 
         self.aprilTagCameras = len(self.apriltagcaptures)
 
-    def initializeConeDetect(self, area_threshold, yellow_lower, yellow_upper):
+    def initializeConeDetect(self, area_threshold, yellow_lower, yellow_upper, angle_convert):
         # self.coneDetectionCameras = 1
         for cvSink in self.cvsinks[self.aprilTagCameras:]:
 
-            self.cone_capture = ConeCapture(cvSink, yellow_lower, yellow_upper, self.frame_width, self.frame_height, area_threshold)
+            self.cone_capture = ConeCapture(cvSink, yellow_lower, yellow_upper, self.frame_width, self.frame_height, area_threshold, angle_convert)
 
         self.aprilTagCameras = len(self.apriltagcaptures)
 
@@ -117,7 +117,7 @@ class NetworkTablesVisionHelper:
     def processVideos(self, drawAxes=False, drawMask=False, drawMarker=False, drawRectangle=False):
 
         self.processAprilTagVideos(drawAxes, drawMask)
-        # self.processConeVideo(draw_mask=drawMask, draw_marker=drawMarker, draw_rectangle=drawRectangle)
+        self.processConeVideo(draw_mask=drawMask, draw_marker=drawMarker, draw_rectangle=drawRectangle)
 
     def processAprilTagVideos(self, drawAxes, drawMask):
 
@@ -169,6 +169,7 @@ class NetworkTablesVisionHelper:
             camera_table = self.sd.getSubTable(self.cone_capture.getCvSink().getSource().getName())
             camera_table.putNumber("X Translation", self.cone_capture.getXTranslation())
             camera_table.putNumber("Y Translation", self.cone_capture.getYTranslation())
+            camera_table.putNumber("Angle", self.cone_capture.getAngle())
                 # print(self.cone_capture.getXTranslation(), self.cone_capture.getYTranslation())
             # else:
                 # print("No Cone Detected.")

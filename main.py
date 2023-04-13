@@ -52,8 +52,10 @@ FRAME_HEIGHT = 480
 
 area_threshold = 12000
 
-yellow_lower = [104, 0, 0]
-yellow_upper = [170, 255, 255]
+colour_lower = [104, 0, 0]
+colour_upper = [170, 255, 255]
+
+angle_convert = 14.2
 
 CONE_DETECTION = True
 
@@ -112,7 +114,7 @@ def start_cycles(visionHelper):
 if __name__ == '__main__':
     num_cameras = len(visionHelper.getSinks())
     # if CONE_DETECTION:
-    visionHelper.initializeDetectors(1, aprilTag_size, cameramtx_path, area_threshold, yellow_lower, yellow_upper)
+    visionHelper.initializeDetectors(1, aprilTag_size, cameramtx_path, area_threshold, colour_lower, colour_upper, angle_convert)
     # visionHelper.initializeAprilTagDetect(aprilTag_size , cameramtx_path)
     # visionHelper.initializeConeDetect(area_threshold, yellow_lower, yellow_upper)
     sd.addEntryListener(sync_networktables_time,key="robottime",immediateNotify=True)
